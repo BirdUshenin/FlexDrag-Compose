@@ -1,5 +1,6 @@
 package com.ilyaushenin.flexdrag.horizontal
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnnecessaryComposedModifier")
 @Composable
 fun DragDropRow(
     items: List<String>,
@@ -45,7 +47,7 @@ fun DragDropRow(
             .pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(
                     onDrag = { change, offset ->
-                        change.consumeAllChanges()
+                        change.consume()
                         dragDropListState.onDrag(offset = offset)
 
                         if (overScrollJob?.isActive == true)
@@ -65,7 +67,7 @@ fun DragDropRow(
                     onDragCancel = { dragDropListState.onDragInterrupted() }
                 )
             }
-            .fillMaxSize()
+            .wrapContentSize()
             .padding(10.dp),
         state = dragDropListState.lazyListState
     ) {
