@@ -1,12 +1,13 @@
 package com.ilyaushenin.flexdrag.horizontal
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,30 +16,38 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import kotlinx.coroutines.launch
+import com.ilyaushenin.flexdrag.data.ItemsDropList
+import com.ilyaushenin.flexdrag.data.move
+import androidx.compose.ui.text.TextStyle
+import com.ilyaushenin.flexdrag.R
+import com.ilyaushenin.flexdrag.ui.textStyles.textStylesMainScreen
 
 @Composable
 fun DragDropRow(
-    items: List<String>,
+    modifier: Modifier = Modifier,
     onMove: (Int, Int) -> Unit,
-    modifier: Modifier = Modifier
+    colorBox: Color = Color.White,
+    textColor: Color = Color.Black,
+    textStyle: TextStyle,
+    items: List<ItemsDropList>
 ) {
     val dragDropListState = rememberDragDropRowState(onMove = onMove)
 
     LazyRow(
         modifier = modifier
             .longPressChecker(dragDropListState = dragDropListState)
-            .wrapContentSize()
-            .padding(10.dp),
+            .wrapContentSize().padding(vertical = 10.dp),
         state = dragDropListState.lazyListState
     ) {
         itemsIndexed(items) { index, item ->
@@ -50,19 +59,41 @@ fun DragDropRow(
                 }, label = "change box animation"
             )
             val isDragged = index == dragDropListState.currentIndexOfDraggedItem
+            Spacer(modifier = Modifier.width(10.dp))
             Column(
                 modifier = Modifier
+                    .size(width = 95.dp, height = 78.dp)
                     .zIndex(if (isDragged) 1f else 0f)
                     .graphicsLayer {
                         translationX = animatedTranslationX
                     }
-                    .background(Color.White, shape = RoundedCornerShape(8.dp))
-                    .padding(20.dp)
+                    .shadow(
+                        elevation = if (isDragged) 10.dp else 0.dp,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .background(colorBox, shape = RoundedCornerShape(8.dp)),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                item.imageRes?.let { image ->
+                    Image(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .padding(top = 8.dp),
+                        painter = painterResource(id = image),
+                        contentDescription = null
+                    )
+                }
                 Text(
-                    text = item,
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily.Serif
+                    modifier = Modifier.padding(
+                        start = 8.dp,
+                        bottom = 8.dp,
+                        end = 8.dp
+                    ),
+                    text = item.text,
+                    color = textColor,
+                    style = textStyle,
+                    maxLines = 2
                 )
             }
             Spacer(modifier = Modifier.width(10.dp))
@@ -70,28 +101,28 @@ fun DragDropRow(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun Modifier.longPressChecker(
-    dragDropListState: DragDropRowState,
-): Modifier {
-    val scope = rememberCoroutineScope()
-    return this.then(
-        pointerInput(Unit) {
-            detectDragGesturesAfterLongPress(
-                onDrag = { change, offset ->
-                    change.consume()
-                    dragDropListState.onDrag(offset = offset)
-
-                    val overScroll = dragDropListState.checkForOverScroll()
-                    if (overScroll != 0f) {
-                        scope.launch {
-                            dragDropListState.lazyListState.scrollBy(overScroll)
-                        }
-                    }
-                },
-                onDragStart = { offset -> dragDropListState.onDragStart(offset) },
-                onDragEnd = { dragDropListState.onDragInterrupted() },
-                onDragCancel = { dragDropListState.onDragInterrupted() }
-            )
-        })
+private fun DragDropRowPreview(){
+    val listItems = remember {
+        mutableStateListOf(
+            ItemsDropList("Favorite Attractiveness", R.drawable.favorite),
+            ItemsDropList("Tram", R.drawable.tram),
+            ItemsDropList("MacDonald", R.drawable.mac),
+            ItemsDropList("Plane Mode", R.drawable.airplanemode),
+            ItemsDropList("Code", R.drawable.code),
+            ItemsDropList("QR Code", R.drawable.qr_code),
+            ItemsDropList("Magic", R.drawable.magic),
+        )
+    }
+    DragDropRow(
+        modifier = Modifier
+            .background(Color.DarkGray),
+        colorBox = Color.White,
+        items = listItems,
+        textStyle = textStylesMainScreen(),
+        onMove = { fromIndex, toIndex ->
+            listItems.move(fromIndex, toIndex)
+        }
+    )
 }
