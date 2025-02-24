@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,11 +26,11 @@ class DragDropRowState(
     val lazyListState: LazyListState,
     private val onMove: (Int, Int) -> Unit
 ) {
-    var draggedDistance by mutableStateOf(0f)
-    var initiallyDraggedElement by mutableStateOf<LazyListItemInfo?>(null)
+    private var draggedDistance by mutableFloatStateOf(0f)
+    private var initiallyDraggedElement by mutableStateOf<LazyListItemInfo?>(null)
     var currentIndexOfDraggedItem by mutableStateOf<Int?>(null)
 
-    val initialOffsets: Pair<Int, Int>?
+    private val initialOffsets: Pair<Int, Int>?
         get() = initiallyDraggedElement?.let {
             Pair(it.offset, it.offsetEnd)
         }
@@ -43,12 +44,12 @@ class DragDropRowState(
                 (initiallyDraggedElement?.offset ?: 0f).toFloat() + draggedDistance - item.offset
             }
 
-    val currentElement: LazyListItemInfo?
+    private val currentElement: LazyListItemInfo?
         get() = currentIndexOfDraggedItem?.let {
             lazyListState.getVisibleItemInfoFor(absolute = it)
         }
 
-    var overScrollJob by mutableStateOf<Job?>(null)
+    private var overScrollJob by mutableStateOf<Job?>(null)
 
     fun onDragStart(offset: Offset) {
         lazyListState.layoutInfo.visibleItemsInfo

@@ -1,12 +1,11 @@
 package com.ilyaushenin.flexdrag.horizontal
 
-import android.annotation.SuppressLint
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -21,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -31,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-@SuppressLint("UnnecessaryComposedModifier")
 @Composable
 fun DragDropRow(
     items: List<String>,
@@ -72,15 +69,17 @@ fun DragDropRow(
         state = dragDropListState.lazyListState
     ) {
         itemsIndexed(items) { index, item ->
+            val animatedTranslationX by animateFloatAsState(
+                targetValue = if (index == dragDropListState.currentIndexOfDraggedItem) {
+                    dragDropListState.elementDisplacement ?: 0f
+                } else {
+                    0f
+                }, label = "change box animation"
+            )
             Column(
                 modifier = Modifier
-                    .composed {
-                        val offsetOrNull = dragDropListState.elementDisplacement.takeIf {
-                            index == dragDropListState.currentIndexOfDraggedItem
-                        }
-                        Modifier.graphicsLayer {
-                            translationX = offsetOrNull ?: 0f
-                        }
+                    .graphicsLayer {
+                        translationX = animatedTranslationX
                     }
                     .background(Color.White, shape = RoundedCornerShape(8.dp))
                     .padding(20.dp)
@@ -91,7 +90,6 @@ fun DragDropRow(
                     fontFamily = FontFamily.Serif
                 )
             }
-
             Spacer(modifier = Modifier.width(10.dp))
         }
     }
