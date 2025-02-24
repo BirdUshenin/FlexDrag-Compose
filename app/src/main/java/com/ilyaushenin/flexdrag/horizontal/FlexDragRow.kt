@@ -34,7 +34,7 @@ import com.ilyaushenin.flexdrag.R
 import com.ilyaushenin.flexdrag.ui.textStyles.textStylesMainScreen
 
 @Composable
-fun DragDropRow(
+fun FlexDragRow(
     modifier: Modifier = Modifier,
     onMove: (Int, Int) -> Unit,
     colorBox: Color = Color.White,
@@ -42,7 +42,7 @@ fun DragDropRow(
     textStyle: TextStyle,
     items: List<ItemsDropList>
 ) {
-    val dragDropListState = rememberDragDropRowState(onMove = onMove)
+    val dragDropListState = rememberFlexDragRowState(onMove = onMove)
 
     LazyRow(
         modifier = modifier
@@ -115,7 +115,7 @@ private fun DragDropRowPreview(){
             ItemsDropList("Magic", R.drawable.magic),
         )
     }
-    DragDropRow(
+    FlexDragRow(
         modifier = Modifier
             .background(Color.DarkGray),
         colorBox = Color.White,

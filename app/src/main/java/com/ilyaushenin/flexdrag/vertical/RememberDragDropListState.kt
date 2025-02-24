@@ -15,14 +15,14 @@ import com.ilyaushenin.flexdrag.data.offsetEnd
 import kotlinx.coroutines.Job
 
 @Composable
-fun rememberDragDropListState(
+fun rememberFlexDragListState(
     lazyListState: LazyListState = rememberLazyListState(),
     onMove: (Int, Int) -> Unit
-): DragDropListState {
-    return remember { DragDropListState(lazyListState = lazyListState, onMove = onMove) }
+): FlexDragListState {
+    return remember { FlexDragListState(lazyListState = lazyListState, onMove = onMove) }
 }
 
-class DragDropListState(
+class FlexDragListState(
     val lazyListState: LazyListState,
     private val onMove: (Int, Int) -> Unit
 ) {

@@ -32,14 +32,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Composable
-fun DragDropColumn(
+fun FlexDragColumn(
     items: List<String>,
     onMove: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
     var overScrollJob by remember { mutableStateOf<Job?>(null) }
-    val dragDropListState = rememberDragDropListState(onMove = onMove)
+    val dragDropListState = rememberFlexDragListState(onMove = onMove)
 
     LazyColumn(
         modifier = modifier

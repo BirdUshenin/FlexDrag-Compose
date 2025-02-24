@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Modifier.longPressChecker(
-    dragDropListState: DragDropRowState,
+    dragDropListState: FlexDragRowState,
 ): Modifier {
     val scope = rememberCoroutineScope()
     val hapticFeedback = LocalHapticFeedback.current

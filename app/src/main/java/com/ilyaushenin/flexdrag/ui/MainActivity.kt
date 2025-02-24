@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.ilyaushenin.flexdrag.R
 import com.ilyaushenin.flexdrag.data.ItemsDropList
 import com.ilyaushenin.flexdrag.data.move
-import com.ilyaushenin.flexdrag.horizontal.DragDropRow
+import com.ilyaushenin.flexdrag.horizontal.FlexDragRow
 import com.ilyaushenin.flexdrag.ui.textStyles.textStylesMainScreen
 import com.ilyaushenin.flexdrag.ui.theme.FlexDragComposeTheme
 
@@ -57,7 +57,7 @@ fun Greeting() {
             .background(Color.White),
         verticalArrangement = Arrangement.Center,
     ) {
-        DragDropRow(
+        FlexDragRow(
             modifier = Modifier.wrapContentSize(),
             items = listItems,
             colorBox = Color(0xFFECECEC),
