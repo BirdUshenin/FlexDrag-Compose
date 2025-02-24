@@ -32,7 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Composable
-fun DragDropList(
+fun DragDropColumn(
     items: List<String>,
     onMove: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
