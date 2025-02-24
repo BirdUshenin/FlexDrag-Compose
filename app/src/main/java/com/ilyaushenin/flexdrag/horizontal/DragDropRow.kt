@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
@@ -28,6 +27,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -75,12 +75,14 @@ fun DragDropRow(
             Column(
                 modifier = Modifier
                     .composed {
-                        val offsetOrNull = dragDropListState.elementDisplacement.takeIf {
-                            index == dragDropListState.currentIndexOfDraggedItem
-                        }
-                        Modifier.graphicsLayer {
-                            translationX = offsetOrNull ?: 0f
-                        }
+                        val isDragged = index == dragDropListState.currentIndexOfDraggedItem
+                        val offsetOrNull =
+                            dragDropListState.elementDisplacement.takeIf { isDragged }
+                        Modifier
+                            .zIndex(if (isDragged) 1f else 0f)
+                            .graphicsLayer {
+                                translationX = offsetOrNull ?: 0f
+                            }
                     }
                     .background(Color.White, shape = RoundedCornerShape(8.dp))
                     .padding(20.dp)
